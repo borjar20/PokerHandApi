@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Pokerhand list
+  description: >-
+    This is an OpenAPI Specification created by oas-wizard
+    (https://github.com/pafmon/oas-wizard)
+  license:
+    name: MIT
+    url: "http://opensource.org/licenses/MIT"
+paths:
+  /api/v1/hand:
+    post:
+      description: Creates a new pokerhand
+      operationId: addHand
+      responses:
+        "201":
+          description: pokerhand created
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorModel"
+      requestBody:
+        x-name: pokerhand
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/pokerhand"
+        description: Pokerhand to be created
+        required: true
+components:
+  schemas:
+    errorModel:
+      type: object
+      required:
+        - resultados
+      properties:
+        code:
+          type: integer
+          format: int32
+        resultados:
+          type: array
+    pokerhand:
+      type: array
+      uniqueItems: true
+      minItems: 1
+      items:
+        type: object
+        properties:
+          bote:
+            type: number
+            minLength: 1
+          jugadas:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              required:
+                - jugador
+                - apuesta
+              properties:
+                jugador:
+                  type: string
+                  minLength: 1
+                apuesta:
+                  type: number
+                cartas:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - valor
+                      - palo
+                    properties:
+                      valor:
+                        type: string
+                        minLength: 1
+                      palo:
+                        type: string
+                        minLength: 1
+        required:
+          - bote
+          - jugadas
