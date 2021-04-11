@@ -11,7 +11,7 @@ module.exports.addHand = function addHand(req, res, next) {
     let {bote,jugadas} = game;
 
     if(calcTrickedDeck(jugadas)){
-      return resultados.push("Partida amañada")
+      return resultados.push({jugadaOriginal:game , resultado:"Partida amañada"})
     }
 
     const handsRanks = []
@@ -25,17 +25,16 @@ module.exports.addHand = function addHand(req, res, next) {
       handsRanks.push(calcHandRank(hand));
     })
     
-    console.log(handsRanks);
 
     let handsOrdered = [...handsRanks];
     handsOrdered.sort((a,b)=>compareHands(a,b));
     if(compareHands(handsOrdered[0],handsOrdered[1]) == 0){
       boteAcum = money;
-      return resultados.push("Iguales.");
+      return resultados.push({jugadaOriginal:game , resultado:`Iguales`})
     }
     
     const winner = jugadas[handsRanks.indexOf(handsOrdered[0])];
-    return resultados.push(`${winner.jugador} gana ${money}`)
+    return resultados.push({jugadaOriginal:game , resultado:`${winner.jugador} gana ${money}€`})
   })
 
   res.send({
@@ -117,8 +116,12 @@ function calcHandRank(hand){
   let straight = straightCards.filter((value) => value === 1).length === 5;
 
   //since lowStraignt start with Ace this subarray is 1 element less
-  straightCards.pop()
-  let lowStraight = straightCards.filter((value) => value === 1).length === 4 && values[12] === 1;
+  let lowStraight = false
+  if(firstValue == 0 && !straight){
+    straightCards.pop()
+    lowStraight = straightCards.filter((value) => value === 1).length === 4 && values[12] === 1;
+  }
+
   let color = suits.some((suit) => suit === 5);
 
   if(lowStraight){
