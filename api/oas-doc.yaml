@@ -37,9 +37,6 @@ components:
       required:
         - resultados
       properties:
-        code:
-          type: integer
-          format: int32
         resultados:
           type: array
     pokerhand:
