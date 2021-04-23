@@ -139,6 +139,8 @@ function calcHandRank(hand){
     indexRank.push({index:firstValue,value:5})
   }
 
+  var nPairs = 0;
+  var nTrips = 0;
   // The basics
   values.forEach((value,index) => {
 
@@ -150,31 +152,14 @@ function calcHandRank(hand){
 
     //find trips
     if(value == 3){
+      nTrips += 1;
       indexRank.push({index,value:4})
       return true 
     }
 
     //find pairs
-    if(value == 2){
-      //check full
-      indexRank.some((valueIndex)=> {
-        if(valueIndex.value == 4){
-          indexRank.push({index:valueIndex.index,value:7})
-          return true 
-        }
-        //check doble pair
-        if(valueIndex.value == 2){
-
-          //check max pair
-          let maxIndex = valueIndex.index
-          if(index > maxIndex){
-            maxIndex = index
-          }
-          indexRank.push({index:maxIndex,value:3})
-          return true 
-        }
-      })
-
+    if(value == 2){ 
+      nPairs += 1; 
       indexRank.push({index,value})
       return true 
     }
@@ -184,6 +169,16 @@ function calcHandRank(hand){
       indexRank.push({index,value})
     }
   })
+
+  //check full
+  if(nPairs==1 && nTrips == 1){
+    indexRank.push({index:0,value:7})
+  }
+
+  //check double Pair
+  if(nPairs==2){
+    indexRank.push({index:0,value:3})
+  }
 
   // sort first by the rankValue and if rankValue is the same compare the card value
   indexRank.sort((a,b) => { if(b.value - a.value == 0){return b.index - a.index} return b.value - a.value })
